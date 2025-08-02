@@ -6,6 +6,11 @@ const HeroSection = () => {
   const [message, setMessage] = useState('');
   const [actors, setActors] = useState([]);
   const [selectedActor, setSelectedActor] = useState('');
+  const [schema, setSchema] = useState(null);
+const [formData, setFormData] = useState({});
+const [resultUrl, setResultUrl] = useState('');
+const [loading, setLoading] = useState(false);
+
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -27,6 +32,25 @@ const HeroSection = () => {
       setActors([]);
     }
   };
+const handleActorSelect = async (e) => {
+  const actorId = e.target.value;
+  setSelectedActor(actorId);
+  setSchema(null);
+  setFormData({});
+  setResultUrl('');
+
+  if (!actorId) return;
+
+  try {
+    const schemaRes = await axios.post('https://6eca2de6-f60c-4a4e-a1cd-17548568ce9e-00-22hqj83u7oykr.pike.replit.dev/api/get-schema', {
+      apiKey,
+      actorId
+    });
+    setSchema(schemaRes.data.schema || {});
+  } catch (error) {
+    console.error('Failed to load schema', error);
+  }
+};
 
   return (
     <>
@@ -60,7 +84,8 @@ const HeroSection = () => {
                 <label className="block font-semibold mb-1 dark:text-white">Select an Actor:</label>
                 <select
                   value={selectedActor}
-                  onChange={(e) => setSelectedActor(e.target.value)}
+                  onChange={handleActorSelect}
+
                   className="w-full px-4 py-2 border border-gray-400 rounded dark:bg-black dark:text-white dark:border-gray-600"
                 >
                   <option value="">-- Select Actor --</option>
@@ -68,6 +93,55 @@ const HeroSection = () => {
                     <option key={actor.id} value={actor.id}>{actor.name}</option>
                   ))}
                 </select>
+                {schema && (
+  <div className="mt-4 space-y-3">
+    {Object.entries(schema.properties || {}).map(([key, value]) => (
+      <div key={key}>
+        <label className="block font-medium dark:text-white">{value.title || key}</label>
+        <input
+          type="text"
+          className="w-full px-3 py-2 border border-gray-300 rounded dark:bg-black dark:text-white"
+          value={formData[key] || ''}
+          onChange={(e) => setFormData({ ...formData, [key]: e.target.value })}
+          placeholder={value.description || ''}
+        />
+      </div>
+    ))}
+    <button
+      onClick={async () => {
+        setLoading(true);
+        setResultUrl('');
+        try {
+          const runRes = await axios.post('https://6eca2de6-f60c-4a4e-a1cd-17548568ce9e-00-22hqj83u7oykr.pike.replit.dev/api/run-actor', {
+            apiKey,
+            actorId: selectedActor,
+            input: formData
+          });
+          setResultUrl(runRes.data.runUrl);
+        } catch (err) {
+          console.error('Actor run failed', err);
+          setResultUrl('Error running actor.');
+        } finally {
+          setLoading(false);
+        }
+      }}
+      className="w-full mt-4 bg-blue-600 text-white py-2 rounded hover:bg-blue-700"
+    >
+      {loading ? 'Running Actor...' : 'Run Actor'}
+    </button>
+
+    {resultUrl && (
+      <div className="mt-3 text-sm text-center text-green-700 dark:text-green-300">
+        {resultUrl.includes('http') ? (
+          <a href={resultUrl} target="_blank" rel="noopener noreferrer" className="underline">
+            View Result on Apify
+          </a>
+        ) : resultUrl}
+      </div>
+    )}
+  </div>
+)}
+
               </div>
             )}
           </div>
@@ -156,4 +230,4 @@ const HeroSection = () => {
   );
 };
 
-export default HeroSection;
+export default HeroSection;    
