@@ -12,10 +12,10 @@ const HeroSection = () => {
     setMessage('Validating...');
 
     try {
-      const validateRes = await axios.post('http://localhost:5000/api/validate-key', { apiKey });
+      const validateRes = await axios.post('https://6eca2de6-f60c-4a4e-a1cd-17548568ce9e-00-22hqj83u7oykr.pike.replit.dev/api/validate-key', { apiKey });
       setMessage(validateRes.data.message);
 
-      const actorRes = await axios.post('http://localhost:5000/api/list-actors', { apiKey });
+      const actorRes = await axios.post('https://6eca2de6-f60c-4a4e-a1cd-17548568ce9e-00-22hqj83u7oykr.pike.replit.dev/api/list-actors', { apiKey });
       setActors(actorRes.data.actors);
 
       if (actorRes.data.actors.length === 0) {
