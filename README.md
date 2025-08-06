@@ -5,15 +5,15 @@ A modern and elegant full-stack web application that allows users to run [Apify]
 
 ## Features
 
-- 🔐 API Key validation
-- 🎭 Actor listing
-- 🧾 Input schema detection
-- 🏃 Actor execution via UI
-- 🔗 Result link to Apify platform
-- 🌙 Dark mode support
-- ⚙️ Backend powered by Express.js
-- 💅 Beautiful UI with Tailwind CSS
-- 📱 Fully responsive
+- API Key validation
+-  Actor listing
+- Input schema detection
+- Actor execution via UI
+-  Result link to Apify platform
+-  Dark mode support
+-  Backend powered by Express.js
+-  Beautiful UI with Tailwind CSS
+-  Fully responsive
 
 ---
 
